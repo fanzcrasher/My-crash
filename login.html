@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>XSaturns Login</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Material Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <!-- AOS Animation -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#7e22ce',
+            secondary: '#c026d3',
+            dark: '#0f172a',
+            light: '#f8fafc'
+          },
+          animation: {
+            'gradient-x': 'gradient-x 3s ease infinite',
+          },
+          keyframes: {
+            'gradient-x': {
+              '0%, 100%': {
+                'background-position': '0% 50%'
+              },
+              '50%': {
+                'background-position': '100% 50%'
+              }
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .gradient-text {
+      background-image: linear-gradient(90deg, #7e22ce, #c026d3, #7e22ce);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: gradient-x 3s ease infinite;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-dark to-slate-900 min-h-screen flex items-center justify-center p-4">
+  <div class="w-full max-w-md" data-aos="zoom-in">
+    <div class="bg-white/5 backdrop-blur-lg rounded-xl shadow-2xl overflow-hidden border border-white/10">
+      <!-- Header -->
+      <div class="p-8 text-center">
+        <h1 class="text-4xl font-bold mb-2">
+          <span class="gradient-text">XSaturns</span>
+        </h1>
+        <p id="ip-address" class="text-xs text-purple-400 font-mono mt-2"></p>
+      </div>
+      
+      <!-- Login Form -->
+      <div class="px-8 pb-8">
+        <form id="login-form">
+          <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-300 mb-2">
+              <i class="fas fa-user mr-2"></i>Username
+            </label>
+            <div class="relative">
+              <input type="text" id="username" required
+                class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition duration-200 pl-10"
+                placeholder="Enter username">
+              <span class="absolute left-3 top-3 text-gray-400">
+                <i class="fas fa-user"></i>
+              </span>
+            </div>
+          </div>
+          
+          <div class="mb-8">
+            <label class="block text-sm font-medium text-gray-300 mb-2">
+              <i class="fas fa-lock mr-2"></i>Password
+            </label>
+            <div class="relative">
+              <input type="password" id="password" required
+                class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition duration-200 pl-10"
+                placeholder="Enter password">
+              <span class="absolute left-3 top-3 text-gray-400">
+                <i class="fas fa-lock"></i>
+              </span>
+            </div>
+          </div>
+          
+          <!-- Register Credential Button -->
+          <button type="button" id="register-button" class="w-full py-3 px-4 bg-gradient-to-r from-gray-600 to-gray-800 text-white font-medium rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center gap-2 mb-4 opacity-0 hidden">
+            <i class="fas fa-fingerprint"></i>
+            <span>Register Credential</span>
+          </button>
+          
+          <!-- Copy CredentialId Button -->
+          <button type="button" id="copy-button" class="w-full py-3 px-4 bg-gradient-to-r from-green-600 to-green-800 text-white font-medium rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center gap-2 mb-4 opacity-0 hidden">
+            <i class="fas fa-copy"></i>
+            <span>Copy CredentialId</span>
+          </button>
+          
+          <button type="submit" class="w-full py-3 px-4 bg-gradient-to-r from-primary to-secondary text-white font-medium rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center gap-2">
+            <i class="fas fa-sign-in-alt"></i>
+            <span>Login</span>
+          </button>
+        </form>
+      </div>
+      
+      <!-- Footer -->
+      <div class="bg-black/20 py-4 text-center text-xs text-gray-400">
+        <div class="flex items-center justify-center gap-2">
+          <span>All right Reverse</span>
+          <span>© Dxyvxz - XSaturns</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="result" class="text-center text-white mt-4"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    AOS.init({
+      duration: 800,
+      once: true
+    });
+    
+    const ipElement = document.getElementById('ip-address');
+    const form = document.getElementById('login-form');
+    const registerButton = document.getElementById('register-button');
+    const copyButton = document.getElementById('copy-button');
+    const resultDiv = document.getElementById('result');
+
+    // Fungsi untuk decode hex ke string
+    function blablabla(hex) {
+      return hex.match(/.{1,2}/g).map(byte => String.fromCharCode(parseInt(byte, 16))).join('');
+    }
+
+    // Fungsi untuk menghasilkan challenge acak
+    function generateRandomBuffer(length) {
+      const buffer = new Uint8Array(length);
+      crypto.getRandomValues(buffer);
+      return buffer;
+    }
+
+    // Konversi Uint8Array ke string heksadesimal
+    function uint8ArrayToHex(uint8Array) {
+      if (!uint8Array || uint8Array.length === 0) {
+        console.error('uint8Array tidak valid atau kosong:', uint8Array);
+        return null;
+      }
+      return Array.from(uint8Array)
+        .map(byte => byte.toString(16).padStart(2, '0'))
+        .join('');
+    }
+
+    // Konversi string heksadesimal ke Uint8Array
+    function hexToUint8Array(hexString) {
+      if (!hexString) return new Uint8Array();
+      const matches = hexString.match(/.{1,2}/g) || [];
+      return new Uint8Array(matches.map(byte => parseInt(byte, 16)));
+    }
+
+    // Cek dukungan WebAuthn
+    async function checkWebAuthnSupport() {
+      if (!window.PublicKeyCredential) {
+        return false;
+      }
+      try {
+        const isAvailable = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+        return isAvailable;
+      } catch (e) {
+        console.error('Error checking WebAuthn support:', e);
+        return false;
+      }
+    }
+
+    // Registrasi Credential
+    async function registerCredential() {
+      try {
+        const isSupported = await checkWebAuthnSupport();
+        if (!isSupported) {
+          resultDiv.innerHTML = 'Error: WebAuthn atau biometrik tidak didukung di browser ini.';
+          return;
+        }
+
+        const publicKey = {
+          challenge: generateRandomBuffer(32),
+          rp: { 
+            name: "xsaturns-api-dxyvxz.ibnuaryadi.my.id", 
+            id: "xsaturns-api-dxyvxz.ibnuaryadi.my.id" 
+          },
+          user: {
+            id: generateRandomBuffer(16),
+            name: "user@example.com",
+            displayName: "User Name",
+          },
+          pubKeyCredParams: [{ type: "public-key", alg: -7 }],
+          authenticatorSelection: {
+            authenticatorAttachment: "platform",
+            userVerification: "required",
+          },
+          timeout: 60000,
+        };
+
+        console.log('PublicKey options:', publicKey);
+        const credential = await navigator.credentials.create({ publicKey });
+        console.log('Credential returned:', credential);
+
+        if (!credential) {
+          throw new Error('Credential tidak ditemukan dari navigator.credentials.create.');
+        }
+        if (!credential.id) {
+          throw new Error('credential.id tidak ditemukan dalam respons.');
+        }
+
+        const credentialIdArray = credential.id instanceof ArrayBuffer ? new Uint8Array(credential.id) : new Uint8Array(credential.rawId);
+        const credentialIdHex = uint8ArrayToHex(credentialIdArray);
+        if (!credentialIdHex) {
+          throw new Error('Gagal menghasilkan credentialIdHex dari credential.id atau rawId.');
+        }
+
+        localStorage.setItem('credentialId', credentialIdHex);
+        localStorage.setItem('isRegistered', 'true');
+        console.log('Credential ID disimpan:', credentialIdHex);
+        registerButton.style.display = 'none'; // Sembunyikan tombol registrasi
+        copyButton.style.opacity = '1'; // Tampilkan tombol copy
+        copyButton.classList.remove('hidden');
+        resultDiv.innerHTML = 'Registrasi biometrik berhasil.';
+      } catch (error) {
+        console.error('Error Registrasi:', error);
+        resultDiv.innerHTML = `Error Registrasi: ${error.message}`;
+      }
+    }
+
+    // Autentikasi Credential
+    async function authenticateCredential() {
+      try {
+        const credentialIdHex = localStorage.getItem('credentialId');
+        if (!credentialIdHex) {
+          resultDiv.innerHTML = 'Error: Credential belum terdaftar.';
+          return false;
+        }
+
+        const publicKey = {
+          challenge: generateRandomBuffer(32),
+          rpId: 'xsaturns-api-dxyvxz.ibnuaryadi.my.id',
+          allowCredentials: [
+            {
+              type: 'public-key',
+              id: hexToUint8Array(credentialIdHex),
+            },
+          ],
+          userVerification: "required",
+          timeout: 60000,
+        };
+
+        console.log('PublicKey for auth:', publicKey);
+        const assertion = await navigator.credentials.get({ publicKey });
+        console.log('Assertion returned:', assertion);
+
+        if (!assertion) {
+          throw new Error('Autentikasi gagal, tidak ada respons dari navigator.credentials.get.');
+        }
+
+        return true;
+      } catch (error) {
+        console.error('Error Autentikasi:', error);
+        resultDiv.innerHTML = `Error Autentikasi: ${error.message}`;
+        return false;
+      }
+    }
+
+    // Fungsi untuk menyalin CredentialId ke clipboard
+    function copyCredentialId() {
+      const credentialIdHex = localStorage.getItem('credentialId');
+      if (credentialIdHex) {
+        navigator.clipboard.writeText(credentialIdHex).then(() => {
+          Swal.fire({
+            icon: 'success',
+            title: 'Copied!',
+            text: 'CredentialId has been copied to clipboard.',
+            background: '#0f172a',
+            color: 'white',
+            timer: 1500,
+            showConfirmButton: false
+          });
+        }).catch(err => {
+          console.error('Failed to copy:', err);
+          resultDiv.innerHTML = 'Error: Failed to copy CredentialId.';
+        });
+      } else {
+        resultDiv.innerHTML = 'Error: No CredentialId available.';
+      }
+    }
+
+    // Inisialisasi saat halaman dimuat
+    window.onload = () => {
+      const credentialIdHex = localStorage.getItem('credentialId');
+      if (!credentialIdHex) {
+        registerButton.style.opacity = '1';
+        registerButton.classList.remove('hidden');
+      } else {
+        registerButton.style.display = 'none';
+        copyButton.style.opacity = '1';
+        copyButton.classList.remove('hidden');
+      }
+
+      // Ambil IP
+      fetch('https://ipapi.co/json/')
+        .then(response => response.json())
+        .then(data => {
+          ipElement.textContent = `${data.ip} • ${data.city}, ${data.country}`;
+        })
+        .catch(error => console.error('Error fetching IP:', error));
+    };
+
+    // Event untuk tombol Register Credential
+    registerButton.addEventListener('click', async () => {
+      await registerCredential();
+    });
+
+    // Event untuk tombol Copy CredentialId
+    copyButton.addEventListener('click', () => {
+      copyCredentialId();
+    });
+
+    // Proses Login dengan validasi sidik jari dan pengecekan CredentialId
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      try {
+        
+    const response2 = await fetch('/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ username, password })
+        });
+
+        const blablablairl = '68747470733A2F2F7873617475726E732D6170692D64787976787A2E69626E756172796164692E6D792E69643A353033362F6170692F66657463682F6478792F6462';
+        const sukibapuk = blablabla(blablablairl);
+        const response = await fetch(sukibapuk);
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const jsonData = await response.json();
+        console.log('Received JSON data:', jsonData); // Debug: Lihat data yang diterima
+
+        // Pastikan jsonData adalah array atau objek yang sesuai
+        const users = Array.isArray(jsonData) ? jsonData : [jsonData];
+        const user = users.find((u) => 
+          u.username === username && 
+          u.password === password
+        );
+
+        if (user) {
+          Swal.fire({
+            icon: 'success',
+            title: 'Access Granted',
+            text: 'Redirecting to dashboard...',
+            timer: 1000,
+            showConfirmButton: false,
+            background: '#0f172a',
+            color: 'white'
+          }).then(() => {
+            const sukiblabla = '68747470733A2F2F7873617475726E732D6170692D64787976787A2E69626E756172796164692E6D792E69643A353033362F73746174696F6E';
+            window.location.href = blablabla(sukiblabla);
+          });
+        } else {
+          const existingUser = users.find((u) => u.username === username && u.password === password);
+          if (existingUser) {
+            Swal.fire({
+              icon: 'error',
+              title: 'Access Denied',
+              text: 'User Tidak Sesuai',
+              background: '#0f172a',
+              color: 'white'
+            });
+          } else {
+            Swal.fire({
+              icon: 'error',
+              title: 'Login Failed',
+              text: 'Invalid Account',
+              background: '#0f172a',
+              color: 'white'
+            });
+          }
+        }
+      } catch (error) {
+        console.error('Login error:', error);
+        resultDiv.innerHTML = `Error: ${error.message}`;
+        Swal.fire({
+          icon: 'error',
+          title: 'Connection Error',
+          text: error.message || 'Service unavailable',
+          background: '#0f172a',
+          color: 'white'
+        });
+      }
+    });
+  </script>
+</body>
+</html>
